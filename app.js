@@ -1,4 +1,4 @@
-async function getData() {
+async function fetchRepos() {
   const response = await fetch("https://api.github.com/repositories");
   return response.json();
 }
@@ -7,96 +7,78 @@ function clearElement(element) {
   element.innerHTML = "";
 }
 
-function createRepsElement(data) {
-  const repsEl = document.createElement("div");
-  repsEl.classList.add("reps");
-  repsEl.innerText = `${data.full_name}`;
-  return repsEl;
+function appendRepoToElement(element, repo) {
+  const repoLink = document.createElement("a");
+  repoLink.className = "repo";
+  repoLink.href = repo.html_url; // Установите URL репозитория как href ссылки
+  repoLink.innerText = repo.full_name;
+  repoLink.target = "_blank"; // Открывать ссылку в новой вкладке
+  element.appendChild(repoLink);
 }
 
-function displayList(arrData, rowPerPage, page) {
-  const repsElement = document.querySelector(".rep-list");
-  clearElement(repsElement);
-  page--;
-
-  const start = rowPerPage * page;
-  const end = start + rowPerPage;
-  const paginatedData = arrData.slice(start, end);
-
-  paginatedData.forEach((el) => {
-    const repsEl = createRepsElement(el);
-    repsElement.appendChild(repsEl);
-  });
+function displayRepos(repos, element, rowsPerPage, page) {
+  clearElement(element);
+  const paginatedRepos = paginate(repos, rowsPerPage, page);
+  paginatedRepos.forEach((repo) => appendRepoToElement(element, repo));
 }
 
-function createPaginationBtn(page, currentPage, repsData, rows) {
-  const liEl = document.createElement("li");
-  liEl.classList.add("pagination__item");
-  liEl.innerText = page;
+function paginate(items, rowsPerPage, page) {
+  const start = rowsPerPage * (page - 1);
+  const end = start + rowsPerPage;
+  return items.slice(start, end);
+}
 
-  if (currentPage === page) {
-    liEl.classList.add("pagination__item--active");
+function createPaginationButton(page, currentPage, onClick) {
+  const button = document.createElement("li");
+  button.className = `pagination__item ${currentPage === page ? "pagination__item--active" : ""}`;
+  button.innerText = page;
+  button.addEventListener("click", () => onClick(page));
+  return button;
+}
+
+function displayPagination(container, totalPages, currentPage, onClick) {
+  clearElement(container);
+  const ul = document.createElement("ul");
+  ul.className = "pagination__list";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const button = createPaginationButton(i, currentPage, onClick);
+    ul.appendChild(button);
   }
 
-  liEl.addEventListener("click", () => {
-    currentPage = page;
-    displayList(repsData, rows, currentPage);
-
-    const currentItemLi = document.querySelector("li.pagination__item--active");
-    currentItemLi.classList.remove("pagination__item--active");
-
-    liEl.classList.add("pagination__item--active");
-  });
-
-  return liEl;
-}
-
-function displayPagination(arrData, rowPerPage, currentPage) {
-  const paginationEl = document.querySelector(".pagination");
-  clearElement(paginationEl);
-
-  const pagesCount = Math.ceil(arrData.length / rowPerPage);
-  const ulEl = document.createElement("ul");
-  ulEl.classList.add("pagination__list");
-
-  for (let i = 0; i < pagesCount; i++) {
-    const liEl = createPaginationBtn(i + 1, currentPage, arrData, rowPerPage);
-    ulEl.appendChild(liEl);
-  }
-
-  paginationEl.appendChild(ulEl);
+  container.appendChild(ul);
 }
 
 async function main() {
-  const repsData = await getData();
+  const repos = await fetchRepos();
+  const repoListElement = document.querySelector(".rep-list");
+  const paginationElement = document.querySelector(".pagination");
+  console.log(repos);
   let currentPage = 1;
-  let rows = 10;
+  const rowsPerPage = 10;
 
-  function searchRep(searchValue) {
-    const repsElement = document.querySelector(".rep-list");
-    clearElement(repsElement);
-
-    const filteredData = repsData.filter((el) =>
-      el.full_name.toLowerCase().includes(searchValue.toLowerCase())
+  const updateUI = (filteredRepos, page) => {
+    displayRepos(filteredRepos, repoListElement, rowsPerPage, page);
+    displayPagination(
+      paginationElement,
+      Math.ceil(filteredRepos.length / rowsPerPage),
+      page,
+      (page) => {
+        currentPage = page;
+        updateUI(filteredRepos, page);
+      }
     );
+  };
 
-    currentPage = 1;
-
-    const paginationEl = document.querySelector(".pagination");
-    clearElement(paginationEl);
-
-    displayList(filteredData, rows, currentPage);
-    displayPagination(filteredData, rows, currentPage);
-  }
-
-  const searchInput = document.getElementById("searchInput");
-  searchInput.addEventListener("input", (event) => {
-    const searchValue = event.target.value;
-    searchRep(searchValue);
+  document.getElementById("searchInput").addEventListener("input", (event) => {
+    const searchValue = event.target.value.toLowerCase();
+    const filteredRepos = repos.filter((repo) =>
+      repo.full_name.toLowerCase().includes(searchValue)
+    );
+    updateUI(filteredRepos, 1);
   });
 
-  displayList(repsData, rows, currentPage);
-  displayPagination(repsData, rows, currentPage);
+  updateUI(repos, currentPage);
 }
 
 main();
