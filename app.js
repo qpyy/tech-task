@@ -10,9 +10,13 @@ function clearElement(element) {
 function appendRepoToElement(element, repo) {
   const repoLink = document.createElement("a");
   repoLink.className = "repo";
-  repoLink.href = repo.html_url; // Установите URL репозитория как href ссылки
-  repoLink.innerText = repo.full_name;
-  repoLink.target = "_blank"; // Открывать ссылку в новой вкладке
+  // Измените href, чтобы перенаправлять на страницу с деталями, передавая информацию в URL
+  repoLink.href = `javascript:void(0);`; // Удалите прямую ссылку на GitHub
+  repoLink.innerText = repo.name;
+  // Удалите target = "_blank", так как переадресация будет внутри вашего приложения
+  repoLink.addEventListener("click", function () {
+    window.location.href = `repo-details.html?repo=${encodeURIComponent(repo.full_name)}`;
+  });
   element.appendChild(repoLink);
 }
 
@@ -72,9 +76,7 @@ async function main() {
 
   document.getElementById("searchInput").addEventListener("input", (event) => {
     const searchValue = event.target.value.toLowerCase();
-    const filteredRepos = repos.filter((repo) =>
-      repo.full_name.toLowerCase().includes(searchValue)
-    );
+    const filteredRepos = repos.filter((repo) => repo.name.toLowerCase().includes(searchValue));
     updateUI(filteredRepos, 1);
   });
 
