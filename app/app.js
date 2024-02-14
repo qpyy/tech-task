@@ -11,7 +11,7 @@ function appendRepoToElement(element, repo) {
   const repoLink = document.createElement("a");
   repoLink.className = "repo";
   
-  repoLink.href = `javascript:void(0);`; // Удалите прямую ссылку на GitHub
+  repoLink.href = `javascript:void(0);`; 
   repoLink.innerText = repo.name;
 
   repoLink.addEventListener("click", function () {
