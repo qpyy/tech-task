@@ -20,7 +20,7 @@ body {
 
 .wrap {
   width: 80%;
-  margin: 25px auto;
+  margin: 30px auto;
   border: 1px solid silver;
   padding: 24px;
 }
@@ -76,4 +76,16 @@ body {
 .pagination__item--active {
   font-weight: 800;
   color: lightcoral;
+}
+
+@media screen and (max-width: 768px) {
+  .repo {
+    padding: 0.35rem 0.5rem;
+    margin: 0.5rem;
+  }
+
+  .pagination__item {
+    padding: 6px;
+    margin: 6px;
+  }
 }
