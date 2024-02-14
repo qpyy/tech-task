@@ -10,10 +10,10 @@ function clearElement(element) {
 function appendRepoToElement(element, repo) {
   const repoLink = document.createElement("a");
   repoLink.className = "repo";
-  // Измените href, чтобы перенаправлять на страницу с деталями, передавая информацию в URL
+  
   repoLink.href = `javascript:void(0);`; // Удалите прямую ссылку на GitHub
   repoLink.innerText = repo.name;
-  // Удалите target = "_blank", так как переадресация будет внутри вашего приложения
+
   repoLink.addEventListener("click", function () {
     window.location.href = `repo-details.html?repo=${encodeURIComponent(repo.full_name)}`;
   });
