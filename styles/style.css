@@ -4,9 +4,23 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .wrap {
-  width: 100%;
-  margin: 100px auto;
+  width: 80%;
+  margin: 25px auto;
   border: 1px solid silver;
   padding: 24px;
 }
@@ -25,30 +39,27 @@
 }
 
 .rep-list {
-  display: flex;
   border-radius: 10px;
   flex-direction: column;
-  background-color: lightblue;
-  width: 800px;
-  height: 600px;
-  justify-content: space-between;
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  margin: -400px 0 0 -400px;
+  width: 40%;
+  margin: auto;
+  border: 1px solid black;
 }
 
 .repo {
-  margin: 20px 10px;
   text-decoration: none;
-  border: 1px solid black;
-  border-radius: 3px;
+  display: flex;
+  background: transparent;
+  color: #000;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
 }
 
 .pagination {
   position: absolute;
-  bottom: 0;
-  left: 40%;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .pagination__list {
@@ -65,10 +76,4 @@
 .pagination__item--active {
   font-weight: 800;
   color: lightcoral;
-}
-
-.reps {
-  padding: 8px;
-  border-color: bisque;
-  border: 1px;
 }
