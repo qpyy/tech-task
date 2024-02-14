@@ -30,21 +30,24 @@ async function displayRepoDetails(repo, languages, contributors, lastCommit) {
   detailsElement.innerHTML = `<h2>${repo.name} - ⭐${
     repo.stargazers_count
   } - Последний коммит: ${lastCommitDate}</h2>
-                              <img src="${
-                                repo.owner.avatar_url
-                              }" alt="Аватар владельца" style="width: 100px;"><br>
-                              <a href="${repo.owner.html_url}" target="_blank">${
-    repo.owner.login
-  }</a>
-                              <p>Используемые языки: ${Object.keys(languages).join(", ")}</p>
-                              <p>${repo.description}</p>
-                              <h3>Контрибьюторы:</h3>
-                              <ul>${contributors
-                                .map(
-                                  (contributor) =>
-                                    `<li><a href="${contributor.html_url}" target="_blank">${contributor.login}</a></li>`
-                                )
-                                .join("")}</ul>`;
+  <img
+    src="${repo.owner.avatar_url}"
+    alt="Аватар владельца"
+    style="width: 100px"
+  /><br />
+  <a href="${repo.owner.html_url}" target="_blank">${repo.owner.login}</a>
+  <p>Используемые языки: ${Object.keys(languages).join(", ")}</p>
+  <p>${repo.description}</p>
+  <h3>Контрибьюторы:</h3>
+  <ul>
+    ${contributors
+      .map(
+        (contributor) => `
+    <li><a href="${contributor.html_url}" target="_blank">${contributor.login}</a></li>
+    `
+      )
+      .join("")}
+  </ul>`;
 }
 
 function getRepoFromURL() {
